@@ -1,12 +1,16 @@
 
 import React, { useState } from 'react'
 import { Link ,useNavigate} from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { signInStart,signInFailure,signInSuccess } from '../redux/user/userSlice'
 
 const Signin = () => {
   const [formData , setFormData]=useState({})
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  const {error,loading } = useSelector((state)=>state.user)  //this is coming from global state name "user" inside userslice
   const navigate=useNavigate();
+  const dispatch=useDispatch();
   // const navigate = useNavigate();
   const handlechange=(e)=>{
     console.log(e.target.value)
@@ -21,7 +25,8 @@ const Signin = () => {
   const handleSubmit=async(e)=>{
       e.preventDefault();
       try{
-      setLoading(true);
+      // setLoading(true); doing using dispatch
+      dispatch(signInStart())
       // const res= await fetch("/api/auth/Signin",formData)
       const res= await fetch("/api/auth/Signin",{   //vite.config.js
         method:"POST",
@@ -35,21 +40,24 @@ const Signin = () => {
       const data = await res.json();
       
       if(data.success==false){
-        setError(data.message);
-        setLoading(false);
+        // setError(data.message);
+        // setLoading(false);
+        dispatch(signInFailure(data.message))
         return;
       }
 
-      setLoading(false) //loading is compleated
-      setError(null);
+      // setLoading(false) //loading is compleated
+      // setError(null);
+      dispatch(signInSuccess(data))
       navigate("/")
       console.log(data);
 
     }
     catch(error){
-      setLoading(false);
-      setError(error.message);
-      console.log(error.message)
+      // setLoading(false);
+      // setError(error.message);
+      // console.log(error.message)
+      dispatch(signInFailure(error.message))
     }
   }
   return (
