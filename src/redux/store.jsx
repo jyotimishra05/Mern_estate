@@ -50,3 +50,6 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+//each time when user refresh the page they gonna lose the data in case of sign in 
+//inorder to do that we can store the data to local srtorage using redux persist 
